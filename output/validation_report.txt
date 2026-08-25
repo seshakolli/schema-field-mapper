@@ -1,0 +1,59 @@
+Schema Field Mapper -- validation report
+============================================================
+
+Document structure
+  PASS  matches the required JSON structure
+  PASS  mapping_version is '1.0'
+  PASS  source label
+  PASS  destination label
+  PASS  generated_at is a valid ISO 8601 timestamp
+  PASS  exactly 3 table mappings
+  PASS  table pairs match the configured pairing
+
+emp_master -> employees
+  PASS  coverage: mapped + unmapped == source inventory
+  PASS  no source field appears twice
+  PASS  no source field is both mapped and unmapped
+  PASS  every destination_field exists in the collection
+  PASS  no destination path is selected twice
+  PASS  unmapped_destination_fields equals inventory minus selected
+  PASS  table confidence within 0..1
+  PASS  table reasoning is one plain-English sentence
+  PASS  every confidence within 0..1
+  PASS  every reasoning is one plain-English sentence
+  PASS  every mapping states a type_transform
+        18 mapped, 1 unmapped source, 7 unmapped destination
+
+dept_info -> departments
+  PASS  coverage: mapped + unmapped == source inventory
+  PASS  no source field appears twice
+  PASS  no source field is both mapped and unmapped
+  PASS  every destination_field exists in the collection
+  PASS  no destination path is selected twice
+  PASS  unmapped_destination_fields equals inventory minus selected
+  PASS  table confidence within 0..1
+  PASS  table reasoning is one plain-English sentence
+  PASS  every confidence within 0..1
+  PASS  every reasoning is one plain-English sentence
+  PASS  every mapping states a type_transform
+        7 mapped, 0 unmapped source, 0 unmapped destination
+
+locations -> locations
+  PASS  coverage: mapped + unmapped == source inventory
+  PASS  no source field appears twice
+  PASS  no source field is both mapped and unmapped
+  PASS  every destination_field exists in the collection
+  PASS  no destination path is selected twice
+  PASS  unmapped_destination_fields equals inventory minus selected
+  PASS  table confidence within 0..1
+  PASS  table reasoning is one plain-English sentence
+  PASS  every confidence within 0..1
+  PASS  every reasoning is one plain-English sentence
+  PASS  every mapping states a type_transform
+        8 mapped, 0 unmapped source, 0 unmapped destination
+
+Totals
+  PASS  source coverage is exactly 34 fields
+
+============================================================
+RESULT: PASSED  (0 failure(s))

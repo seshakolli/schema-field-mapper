@@ -1,0 +1,56 @@
+{
+  "database": "legacy_hrm",
+  "type": "MySQL (Relational)",
+  "label": "legacy_hrm (MySQL)",
+  "tables": {
+    "emp_master": {
+      "description": "Core employee record for the legacy HR management system.",
+      "fields": [
+        { "name": "emp_id",        "type": "INT",           "constraints": ["PRIMARY KEY"],        "description": null },
+        { "name": "emp_cd",        "type": "VARCHAR(20)",   "constraints": ["UNIQUE", "NOT NULL"], "description": "human-readable employee code" },
+        { "name": "f_name",        "type": "VARCHAR(50)",   "constraints": ["NOT NULL"],           "description": null },
+        { "name": "l_name",        "type": "VARCHAR(50)",   "constraints": ["NOT NULL"],           "description": null },
+        { "name": "dob",           "type": "DATE",          "constraints": [],                     "description": null },
+        { "name": "hire_dt",       "type": "DATETIME",      "constraints": [],                     "description": null },
+        { "name": "term_dt",       "type": "DATETIME",      "constraints": [],                     "description": "null if still active" },
+        { "name": "dept_id",       "type": "INT",           "constraints": [],                     "description": null, "references": { "table": "dept_info",  "field": "dept_id" } },
+        { "name": "mgr_emp_id",    "type": "INT",           "constraints": [],                     "description": null, "references": { "table": "emp_master", "field": "emp_id" } },
+        { "name": "job_lvl_cd",    "type": "VARCHAR(10)",   "constraints": [],                     "description": "e.g. L1, L2, IC3, M1" },
+        { "name": "base_sal",      "type": "DECIMAL(12,2)", "constraints": [],                     "description": null },
+        { "name": "sal_currency",  "type": "CHAR(3)",       "constraints": [],                     "description": "ISO 4217, e.g. USD" },
+        { "name": "work_email",    "type": "VARCHAR(120)",  "constraints": ["UNIQUE"],             "description": null },
+        { "name": "work_phone",    "type": "VARCHAR(20)",   "constraints": [],                     "description": null },
+        { "name": "office_loc_id", "type": "INT",           "constraints": [],                     "description": null, "references": { "table": "locations", "field": "loc_id" } },
+        { "name": "is_remote",     "type": "TINYINT(1)",    "constraints": [],                     "description": "0 or 1" },
+        { "name": "rec_stat",      "type": "CHAR(1)",       "constraints": [],                     "description": "A=Active, I=Inactive, T=Terminated" },
+        { "name": "created_ts",    "type": "DATETIME",      "constraints": [],                     "description": "record creation timestamp" },
+        { "name": "updated_ts",    "type": "DATETIME",      "constraints": [],                     "description": "last update timestamp" }
+      ]
+    },
+    "dept_info": {
+      "description": "Department hierarchy for the legacy HR management system.",
+      "fields": [
+        { "name": "dept_id",        "type": "INT",         "constraints": ["PRIMARY KEY"], "description": null },
+        { "name": "dept_cd",        "type": "VARCHAR(20)", "constraints": ["UNIQUE"],      "description": null },
+        { "name": "dept_nm",        "type": "VARCHAR(100)","constraints": [],              "description": null },
+        { "name": "parent_dept_id", "type": "INT",         "constraints": [],              "description": "self-referencing", "references": { "table": "dept_info",  "field": "dept_id" } },
+        { "name": "dept_head_id",   "type": "INT",         "constraints": [],              "description": null,               "references": { "table": "emp_master", "field": "emp_id" } },
+        { "name": "cost_ctr_cd",    "type": "VARCHAR(20)", "constraints": [],              "description": "finance cost center code" },
+        { "name": "dept_stat",      "type": "CHAR(1)",     "constraints": [],              "description": "A=Active, I=Inactive" }
+      ]
+    },
+    "locations": {
+      "description": "Physical office locations for the legacy HR management system.",
+      "fields": [
+        { "name": "loc_id",     "type": "INT",          "constraints": ["PRIMARY KEY"], "description": null },
+        { "name": "loc_cd",     "type": "VARCHAR(20)",  "constraints": ["UNIQUE"],      "description": null },
+        { "name": "loc_nm",     "type": "VARCHAR(100)", "constraints": [],              "description": null },
+        { "name": "city",       "type": "VARCHAR(80)",  "constraints": [],              "description": null },
+        { "name": "state_prov", "type": "VARCHAR(80)",  "constraints": [],              "description": null },
+        { "name": "country_cd", "type": "CHAR(2)",      "constraints": [],              "description": "ISO 3166-1 alpha-2" },
+        { "name": "postal_cd",  "type": "VARCHAR(20)",  "constraints": [],              "description": null },
+        { "name": "tz_cd",      "type": "VARCHAR(50)",  "constraints": [],              "description": "IANA timezone" }
+      ]
+    }
+  }
+}

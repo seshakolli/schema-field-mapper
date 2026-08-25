@@ -1,0 +1,893 @@
+{
+  "stage": "field_mappings",
+  "generated_at": "2026-08-25T18:52:00.596784+00:00",
+  "backend": "claude-code",
+  "model": "claude-sonnet-5",
+  "results": [
+    {
+      "source_table": "emp_master",
+      "source_field": "emp_id",
+      "destination_collection": "employees",
+      "candidates": [
+        "_id",
+        "location.locationId",
+        "employment.managerId",
+        "department.departmentId",
+        "employeeCode"
+      ],
+      "candidate_score": 0.5991,
+      "proposal": {
+        "destination_field": "_id",
+        "type_transform": "INT primary key -> ObjectId",
+        "confidence": 0.85,
+        "reasoning": "emp_id is the primary key of emp_master and thus corresponds to the employee document's identity field, though the legacy integer value must be migrated via a new ObjectId with a lookup mapping preserved for traceability.",
+        "notes": "Generate a new ObjectId for each employee and build a legacy emp_id-to-_id lookup table so other foreign keys referencing emp_id can be resolved; consider retaining the original emp_id in employeeCode or a legacy-id field for traceability."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "emp_cd",
+      "destination_collection": "employees",
+      "candidates": [
+        "employeeCode",
+        "department.code",
+        "location.code",
+        "contact.phone",
+        "location.country"
+      ],
+      "candidate_score": 0.8,
+      "proposal": {
+        "destination_field": "employeeCode",
+        "type_transform": "VARCHAR(20) -> String",
+        "confidence": 0.97,
+        "reasoning": "emp_cd is a unique human-readable employee code that directly corresponds to the employeeCode field described as a unique human-readable ID.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "f_name",
+      "destination_collection": "employees",
+      "candidates": [
+        "fullName.firstName",
+        "department.name",
+        "location.name",
+        "fullName.lastName",
+        "employment.status"
+      ],
+      "candidate_score": 0.65,
+      "proposal": {
+        "destination_field": "fullName.firstName",
+        "type_transform": "VARCHAR(50) -> String",
+        "confidence": 0.95,
+        "reasoning": "f_name is the employee's first name, which maps directly to fullName.firstName in the destination schema.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "l_name",
+      "destination_collection": "employees",
+      "candidates": [
+        "fullName.lastName",
+        "department.name",
+        "location.name",
+        "fullName.firstName",
+        "employment.status"
+      ],
+      "candidate_score": 0.65,
+      "proposal": {
+        "destination_field": "fullName.lastName",
+        "type_transform": "VARCHAR(50) -> String",
+        "confidence": 0.97,
+        "reasoning": "l_name is the employee's last name, which maps directly to fullName.lastName in the destination.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "dob",
+      "destination_collection": "employees",
+      "candidates": [
+        "employment.endDate",
+        "employment.startDate",
+        "meta.createdAt",
+        "meta.updatedAt",
+        "fullName.firstName"
+      ],
+      "candidate_score": null,
+      "proposal": {
+        "destination_field": null,
+        "type_transform": null,
+        "confidence": 0.97,
+        "reasoning": "Date of birth is a personal biographical fact not represented by any of the employment dates, metadata timestamps, or name fields offered.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "hire_dt",
+      "destination_collection": "employees",
+      "candidates": [
+        "employment.startDate",
+        "employment.endDate",
+        "meta.updatedAt",
+        "meta.createdAt",
+        "compensation.baseSalary"
+      ],
+      "candidate_score": 0.65,
+      "proposal": {
+        "destination_field": "employment.startDate",
+        "type_transform": "DATETIME -> ISODate",
+        "confidence": 0.95,
+        "reasoning": "hire_dt records the date the employee started working, which is exactly what employment.startDate represents.",
+        "notes": "Assume the naive DATETIME is in the source system's local/organizational timezone and convert to an absolute instant accordingly; nullability should be preserved for employees whose hire date is unknown."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "term_dt",
+      "destination_collection": "employees",
+      "candidates": [
+        "employment.endDate",
+        "employment.startDate",
+        "meta.updatedAt",
+        "meta.createdAt",
+        "employment.status"
+      ],
+      "candidate_score": 0.7,
+      "proposal": {
+        "destination_field": "employment.endDate",
+        "type_transform": "DATETIME -> ISODate",
+        "confidence": 0.95,
+        "reasoning": "term_dt records the date employment was terminated, which corresponds directly to the employment period's end date, with null in both meaning still active.",
+        "notes": "Preserve null values as-is to indicate current employment; if term_dt carries a time-of-day component that is an artifact of the legacy DATETIME type, confirm whether only the date portion is meaningful, and assume a source timezone when converting to an absolute ISODate instant."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "dept_id",
+      "destination_collection": "employees",
+      "candidates": [
+        "department.departmentId",
+        "_id",
+        "location.locationId",
+        "employment.managerId",
+        "compensation.baseSalary"
+      ],
+      "candidate_score": 0.9333,
+      "proposal": {
+        "destination_field": "department.departmentId",
+        "type_transform": "INT foreign key -> ObjectId",
+        "confidence": 0.92,
+        "reasoning": "dept_id is a foreign key to dept_info.dept_id, which maps to the employee's department reference in the destination schema, department.departmentId.",
+        "notes": "Requires building a lookup table mapping legacy dept_info.dept_id integer values to the new departments._id ObjectId values generated during migration of dept_info; null source values should map to a null or absent reference."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "mgr_emp_id",
+      "destination_collection": "employees",
+      "candidates": [
+        "employment.managerId",
+        "location.locationId",
+        "_id",
+        "department.departmentId",
+        "employeeCode"
+      ],
+      "candidate_score": 0.7209,
+      "proposal": {
+        "destination_field": "employment.managerId",
+        "type_transform": "INT -> ObjectId",
+        "confidence": 0.9,
+        "reasoning": "mgr_emp_id is a self-referencing foreign key to emp_master.emp_id representing the employee's manager, which corresponds directly to employment.managerId referencing employees._id.",
+        "notes": "Resolve the legacy mgr_emp_id integer to the corresponding new employees._id via a lookup table built during migration, and set the field to null when mgr_emp_id is null (e.g., for top-level employees)."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "job_lvl_cd",
+      "destination_collection": "employees",
+      "candidates": [
+        "employment.jobLevel",
+        "department.code",
+        "location.code",
+        "employeeCode",
+        "contact.email"
+      ],
+      "candidate_score": 0.591,
+      "proposal": {
+        "destination_field": "employment.jobLevel",
+        "type_transform": "VARCHAR(10) -> String",
+        "confidence": 0.95,
+        "reasoning": "job_lvl_cd stores the employee's job level code (e.g. L1, IC3, M1), which directly matches employment.jobLevel's example values and purpose.",
+        "notes": "Value format already matches destination examples, so codes copy across directly with no lookup table needed."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "base_sal",
+      "destination_collection": "employees",
+      "candidates": [
+        "compensation.baseSalary",
+        "compensation.currency",
+        "employment.startDate",
+        "employment.endDate",
+        "employment.jobLevel"
+      ],
+      "candidate_score": 0.7,
+      "proposal": {
+        "destination_field": "compensation.baseSalary",
+        "type_transform": "DECIMAL(12,2) -> Number",
+        "confidence": 0.93,
+        "reasoning": "base_sal is the employee's base salary amount, which directly corresponds to compensation.baseSalary.",
+        "notes": "Converting from fixed-precision DECIMAL(12,2) to a floating-point Number can lose exact precision for salary values."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "sal_currency",
+      "destination_collection": "employees",
+      "candidates": [
+        "compensation.currency",
+        "compensation.baseSalary",
+        "location.country",
+        "contact.email",
+        "employeeCode"
+      ],
+      "candidate_score": 0.6007,
+      "proposal": {
+        "destination_field": "compensation.currency",
+        "type_transform": "CHAR(3) -> String",
+        "confidence": 0.97,
+        "reasoning": "sal_currency stores the ISO 4217 currency code for salary, which directly matches compensation.currency's ISO 4217 comment.",
+        "notes": "Direct copy of the 3-letter ISO 4217 code; no lookup needed since both use the same standard, though nullability should be preserved."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "work_email",
+      "destination_collection": "employees",
+      "candidates": [
+        "contact.email",
+        "employeeCode",
+        "location.country",
+        "location.timezone",
+        "employment.jobLevel"
+      ],
+      "candidate_score": 0.3983,
+      "proposal": {
+        "destination_field": "contact.email",
+        "type_transform": "VARCHAR(120) -> String",
+        "confidence": 0.95,
+        "reasoning": "work_email is the employee's email address, which maps directly to the contact.email field.",
+        "notes": "Preserve the unique constraint at the application level since the destination schema does not declare uniqueness explicitly; drop rows with null values as-is since the field is nullable in both schemas."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "work_phone",
+      "destination_collection": "employees",
+      "candidates": [
+        "contact.phone",
+        "location.country",
+        "location.timezone",
+        "department.code",
+        "department.name"
+      ],
+      "candidate_score": 0.3983,
+      "proposal": {
+        "destination_field": "contact.phone",
+        "type_transform": "VARCHAR(20) -> String",
+        "confidence": 0.9,
+        "reasoning": "work_phone is a telephone contact number for the employee, which maps directly to the general contact.phone field.",
+        "notes": "Direct copy of the phone number string; if contact.phone is meant to hold a single number, any pre-existing personal/mobile number convention should be reconciled during migration."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "office_loc_id",
+      "destination_collection": "employees",
+      "candidates": [
+        "location.locationId",
+        "employment.managerId",
+        "_id",
+        "department.departmentId",
+        "compensation.baseSalary"
+      ],
+      "candidate_score": 0.7474,
+      "proposal": {
+        "destination_field": "location.locationId",
+        "type_transform": "INT -> ObjectId",
+        "confidence": 0.95,
+        "reasoning": "office_loc_id is a foreign key to locations.loc_id, which matches location.locationId's documented reference to locations._id.",
+        "notes": "Resolve legacy locations.loc_id integer values to the corresponding locations._id via a lookup built during migration, and handle nulls for employees with no assigned office location."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "is_remote",
+      "destination_collection": "employees",
+      "candidates": [
+        "employment.isRemote",
+        "compensation.baseSalary",
+        "meta.createdAt",
+        "location.timezone",
+        "contact.email"
+      ],
+      "candidate_score": 0.625,
+      "proposal": {
+        "destination_field": "employment.isRemote",
+        "type_transform": "TINYINT(1) -> Boolean",
+        "confidence": 0.97,
+        "reasoning": "is_remote is a 0/1 flag indicating remote work status, which directly corresponds to the boolean employment.isRemote field.",
+        "notes": "Convert 0/1 integer values to false/true."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "rec_stat",
+      "destination_collection": "employees",
+      "candidates": [
+        "employment.status",
+        "department.code",
+        "location.code",
+        "fullName.firstName",
+        "employeeCode"
+      ],
+      "candidate_score": 0.4955,
+      "proposal": {
+        "destination_field": "employment.status",
+        "type_transform": "CHAR(1) code -> String enum",
+        "confidence": 0.93,
+        "reasoning": "rec_stat is a coded employment status flag that directly corresponds to the destination's active/inactive/terminated status field.",
+        "notes": "Map coded values via the comment: A -> active, I -> inactive, T -> terminated."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "created_ts",
+      "destination_collection": "employees",
+      "candidates": [
+        "meta.createdAt",
+        "employment.startDate",
+        "employment.endDate",
+        "meta.updatedAt",
+        "fullName.lastName"
+      ],
+      "candidate_score": 0.422,
+      "proposal": {
+        "destination_field": "meta.createdAt",
+        "type_transform": "DATETIME -> ISODate",
+        "confidence": 0.93,
+        "reasoning": "created_ts records when the employee row was created, which is exactly what meta.createdAt captures in the document schema.",
+        "notes": "Assume the naive DATETIME is in the source system's local/reference timezone and convert to UTC when producing the ISODate."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "emp_master",
+      "source_field": "updated_ts",
+      "destination_collection": "employees",
+      "candidates": [
+        "meta.updatedAt",
+        "meta.createdAt",
+        "employment.endDate",
+        "employment.startDate",
+        "fullName.lastName"
+      ],
+      "candidate_score": 0.422,
+      "proposal": {
+        "destination_field": "meta.updatedAt",
+        "type_transform": "DATETIME -> ISODate",
+        "confidence": 0.95,
+        "reasoning": "updated_ts records the last modification time of the employee row, which corresponds directly to the meta.updatedAt audit timestamp.",
+        "notes": "Assume the naive DATETIME is in the source system's local/reference timezone and convert to an absolute UTC instant when populating meta.updatedAt."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "dept_info",
+      "source_field": "dept_id",
+      "destination_collection": "departments",
+      "candidates": [
+        "_id",
+        "parentDepartmentId",
+        "headEmployeeId",
+        "name",
+        "costCenterCode"
+      ],
+      "candidate_score": 0.5913,
+      "proposal": {
+        "destination_field": "_id",
+        "type_transform": "INT primary key -> ObjectId",
+        "confidence": 0.95,
+        "reasoning": "dept_id is the table's primary key, which corresponds to the document's identity field in the destination collection.",
+        "notes": "Legacy integer dept_id values must be resolved to newly generated ObjectId identifiers via a lookup table built during migration, and dept_id should be retained elsewhere for traceability if needed."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "dept_info",
+      "source_field": "dept_cd",
+      "destination_collection": "departments",
+      "candidates": [
+        "code",
+        "costCenterCode",
+        "parentDepartmentId",
+        "name",
+        "isActive"
+      ],
+      "candidate_score": 0.4037,
+      "proposal": {
+        "destination_field": "code",
+        "type_transform": "VARCHAR(20) -> String",
+        "confidence": 0.9,
+        "reasoning": "dept_cd is the unique short business code for a department, which corresponds directly to the departments.code field.",
+        "notes": "Direct string copy; verify uniqueness constraint is preserved in the destination collection."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "dept_info",
+      "source_field": "dept_nm",
+      "destination_collection": "departments",
+      "candidates": [
+        "name",
+        "parentDepartmentId",
+        "costCenterCode",
+        "code",
+        "headEmployeeId"
+      ],
+      "candidate_score": 0.4037,
+      "proposal": {
+        "destination_field": "name",
+        "type_transform": "VARCHAR(100) -> String",
+        "confidence": 0.97,
+        "reasoning": "dept_nm is the department's display name, which corresponds directly to the name field in the departments collection.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "dept_info",
+      "source_field": "parent_dept_id",
+      "destination_collection": "departments",
+      "candidates": [
+        "parentDepartmentId",
+        "_id",
+        "headEmployeeId",
+        "costCenterCode",
+        "name"
+      ],
+      "candidate_score": 0.95,
+      "proposal": {
+        "destination_field": "parentDepartmentId",
+        "type_transform": "INT -> ObjectId",
+        "confidence": 0.95,
+        "reasoning": "Both fields represent the self-referencing link from a department to its parent department.",
+        "notes": "Resolve legacy dept_id values via a lookup table built during migration to map to the new ObjectId, leaving the field null where parent_dept_id was null (top-level departments)."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "dept_info",
+      "source_field": "dept_head_id",
+      "destination_collection": "departments",
+      "candidates": [
+        "headEmployeeId",
+        "parentDepartmentId",
+        "_id",
+        "costCenterCode",
+        "name"
+      ],
+      "candidate_score": 0.6383,
+      "proposal": {
+        "destination_field": "headEmployeeId",
+        "type_transform": "INT -> ObjectId",
+        "confidence": 0.92,
+        "reasoning": "dept_head_id is a foreign key to emp_master.emp_id identifying the department's head employee, which corresponds directly to headEmployeeId's ref -> employees._id.",
+        "notes": "Resolve the legacy emp_id value through an employee_id-to-_id lookup built during migration, and set headEmployeeId to null where dept_head_id is null."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "dept_info",
+      "source_field": "cost_ctr_cd",
+      "destination_collection": "departments",
+      "candidates": [
+        "costCenterCode",
+        "code",
+        "name",
+        "parentDepartmentId",
+        "headEmployeeId"
+      ],
+      "candidate_score": 0.775,
+      "proposal": {
+        "destination_field": "costCenterCode",
+        "type_transform": "VARCHAR(20) -> String",
+        "confidence": 0.95,
+        "reasoning": "cost_ctr_cd stores the finance cost center code, which directly corresponds to the departments.costCenterCode field.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "dept_info",
+      "source_field": "dept_stat",
+      "destination_collection": "departments",
+      "candidates": [
+        "isActive",
+        "parentDepartmentId",
+        "costCenterCode",
+        "name",
+        "code"
+      ],
+      "candidate_score": 0.4757,
+      "proposal": {
+        "destination_field": "isActive",
+        "type_transform": "CHAR(1) code -> Boolean",
+        "confidence": 0.93,
+        "reasoning": "dept_stat is a status code where A/I directly encodes whether the department is active, matching the boolean isActive field.",
+        "notes": "Map A -> true and I -> false during migration."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "locations",
+      "source_field": "loc_id",
+      "destination_collection": "locations",
+      "candidates": [
+        "_id",
+        "timezone",
+        "stateOrProvince",
+        "postalCode",
+        "city"
+      ],
+      "candidate_score": 0.5946,
+      "proposal": {
+        "destination_field": "_id",
+        "type_transform": "INT primary key -> ObjectId",
+        "confidence": 0.95,
+        "reasoning": "loc_id is the legacy primary key of locations, which corresponds semantically to the document's identity field _id.",
+        "notes": "Generate a new ObjectId for each document and build a lookup table mapping legacy loc_id values to the new _id for resolving foreign key references elsewhere; retain loc_id as a legacy identifier field if traceability is required."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "locations",
+      "source_field": "loc_cd",
+      "destination_collection": "locations",
+      "candidates": [
+        "code",
+        "postalCode",
+        "timezone",
+        "stateOrProvince",
+        "country"
+      ],
+      "candidate_score": 0.4076,
+      "proposal": {
+        "destination_field": "code",
+        "type_transform": "VARCHAR(20) -> String",
+        "confidence": 0.9,
+        "reasoning": "loc_cd is a unique short location code, which corresponds directly to the destination's code field rather than any of the more specific attributes like postalCode, timezone, stateOrProvince, or country.",
+        "notes": "Copy the code value directly; enforce uniqueness in the new collection as it was a UNIQUE key in the source."
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "locations",
+      "source_field": "loc_nm",
+      "destination_collection": "locations",
+      "candidates": [
+        "name",
+        "timezone",
+        "stateOrProvince",
+        "city",
+        "code"
+      ],
+      "candidate_score": 0.4076,
+      "proposal": {
+        "destination_field": "name",
+        "type_transform": "VARCHAR(100) -> String",
+        "confidence": 0.95,
+        "reasoning": "loc_nm is the location's name, which corresponds directly to the destination's name field.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "locations",
+      "source_field": "city",
+      "destination_collection": "locations",
+      "candidates": [
+        "city",
+        "country",
+        "postalCode",
+        "code",
+        "stateOrProvince"
+      ],
+      "candidate_score": 0.7,
+      "proposal": {
+        "destination_field": "city",
+        "type_transform": "VARCHAR(80) -> String",
+        "confidence": 0.98,
+        "reasoning": "Both the source column and the candidate represent the city name of the location, making them directly equivalent.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "locations",
+      "source_field": "state_prov",
+      "destination_collection": "locations",
+      "candidates": [
+        "stateOrProvince",
+        "postalCode",
+        "timezone",
+        "city",
+        "code"
+      ],
+      "candidate_score": 0.7,
+      "proposal": {
+        "destination_field": "stateOrProvince",
+        "type_transform": "VARCHAR(80) -> String",
+        "confidence": 0.96,
+        "reasoning": "state_prov directly stores the state or province of the address, matching the stateOrProvince field.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "locations",
+      "source_field": "country_cd",
+      "destination_collection": "locations",
+      "candidates": [
+        "country",
+        "code",
+        "postalCode",
+        "city",
+        "stateOrProvince"
+      ],
+      "candidate_score": 0.5289,
+      "proposal": {
+        "destination_field": "country",
+        "type_transform": "CHAR(2) -> String",
+        "confidence": 0.98,
+        "reasoning": "Both country_cd and country hold the ISO 3166-1 alpha-2 country code, as confirmed by matching comments.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "locations",
+      "source_field": "postal_cd",
+      "destination_collection": "locations",
+      "candidates": [
+        "postalCode",
+        "code",
+        "stateOrProvince",
+        "country",
+        "city"
+      ],
+      "candidate_score": 0.7,
+      "proposal": {
+        "destination_field": "postalCode",
+        "type_transform": "VARCHAR(20) -> String",
+        "confidence": 0.95,
+        "reasoning": "postal_cd stores the postal/ZIP code value, which corresponds directly to the postalCode field.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    },
+    {
+      "source_table": "locations",
+      "source_field": "tz_cd",
+      "destination_collection": "locations",
+      "candidates": [
+        "timezone",
+        "code",
+        "postalCode",
+        "stateOrProvince",
+        "country"
+      ],
+      "candidate_score": 0.531,
+      "proposal": {
+        "destination_field": "timezone",
+        "type_transform": "VARCHAR(50) -> String",
+        "confidence": 0.97,
+        "reasoning": "tz_cd stores the IANA timezone identifier for a location, which is exactly what the destination's timezone field holds per its matching comment.",
+        "notes": null
+      },
+      "outcome": {
+        "attempts": 1,
+        "origin": "live",
+        "backend": "claude-code",
+        "rejections": []
+      }
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,7 @@
+# Normalize line endings so the repository stores LF regardless of platform.
+* text=auto
+
+*.py   text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.txt  text eol=lf

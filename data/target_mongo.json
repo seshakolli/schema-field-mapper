@@ -1,0 +1,97 @@
+{
+  "database": "people_platform",
+  "type": "MongoDB (Document)",
+  "label": "people_platform (MongoDB)",
+  "collections": {
+    "employees": {
+      "description": "Core employee document for the modern people platform.",
+      "fields": {
+        "_id":          { "type": "ObjectId", "description": null },
+        "employeeCode": { "type": "String",   "description": "unique human-readable ID" },
+        "fullName": {
+          "type": "Object",
+          "fields": {
+            "firstName": { "type": "String", "description": null },
+            "lastName":  { "type": "String", "description": null }
+          }
+        },
+        "employment": {
+          "type": "Object",
+          "fields": {
+            "startDate": { "type": "ISODate", "description": null },
+            "endDate":   { "type": "ISODate", "description": "null if currently employed" },
+            "status":    { "type": "String",  "description": "active / inactive / terminated" },
+            "jobLevel":  { "type": "String",  "description": "e.g. L1, IC3, M1" },
+            "isRemote":  { "type": "Boolean", "description": null },
+            "managerId": { "type": "ObjectId","description": "ref -> employees._id", "references": { "collection": "employees", "field": "_id" } }
+          }
+        },
+        "compensation": {
+          "type": "Object",
+          "fields": {
+            "baseSalary": { "type": "Number", "description": null },
+            "currency":   { "type": "String", "description": "ISO 4217" }
+          }
+        },
+        "contact": {
+          "type": "Object",
+          "fields": {
+            "email": { "type": "String", "description": null },
+            "phone": { "type": "String", "description": null }
+          }
+        },
+        "department": {
+          "type": "Object",
+          "fields": {
+            "departmentId": { "type": "ObjectId", "description": "ref -> departments._id", "references": { "collection": "departments", "field": "_id" } },
+            "code":         { "type": "String",   "description": null },
+            "name":         { "type": "String",   "description": null }
+          }
+        },
+        "location": {
+          "type": "Object",
+          "fields": {
+            "locationId": { "type": "ObjectId", "description": "ref -> locations._id", "references": { "collection": "locations", "field": "_id" } },
+            "code":       { "type": "String",   "description": null },
+            "name":       { "type": "String",   "description": null },
+            "city":       { "type": "String",   "description": null },
+            "country":    { "type": "String",   "description": "ISO 3166-1 alpha-2" },
+            "timezone":   { "type": "String",   "description": "IANA timezone" }
+          }
+        },
+        "meta": {
+          "type": "Object",
+          "fields": {
+            "createdAt": { "type": "ISODate", "description": null },
+            "updatedAt": { "type": "ISODate", "description": null }
+          }
+        }
+      }
+    },
+    "departments": {
+      "description": "Department document for the modern people platform.",
+      "fields": {
+        "_id":                { "type": "ObjectId", "description": null },
+        "code":               { "type": "String",   "description": null },
+        "name":               { "type": "String",   "description": null },
+        "parentDepartmentId": { "type": "ObjectId", "description": "self-ref", "references": { "collection": "departments", "field": "_id" } },
+        "headEmployeeId":     { "type": "ObjectId", "description": "ref -> employees._id", "references": { "collection": "employees", "field": "_id" } },
+        "costCenterCode":     { "type": "String",   "description": null },
+        "isActive":           { "type": "Boolean",  "description": null }
+      }
+    },
+    "locations": {
+      "description": "Location document for the modern people platform.",
+      "fields": {
+        "_id":             { "type": "ObjectId", "description": null },
+        "code":            { "type": "String",   "description": null },
+        "name":            { "type": "String",   "description": null },
+        "city":            { "type": "String",   "description": null },
+        "stateOrProvince": { "type": "String",   "description": null },
+        "country":         { "type": "String",   "description": "ISO 3166-1 alpha-2" },
+        "postalCode":      { "type": "String",   "description": null },
+        "timezone":        { "type": "String",   "description": "IANA timezone" }
+      }
+    }
+  }
+}

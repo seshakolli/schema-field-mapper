@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Secrets -- never committed
+.env
+
+# The assignment brief belongs to the employer; not republished here.
+InterviewAssignment.docx
+
+# Raw per-prompt LLM response cache. Regenerable and noisy; the validated
+# proposals are committed in output/stages/field_mappings.json instead.
+output/.cache/
+
+# Development-run transcripts and backups kept while comparing runs.
+output/full_run.log
+*.prev.log
+*.prev.json
+
+# Committed deliverables (listed for clarity -- these are NOT ignored):
+#   output/mapping.json                  the deliverable
+#   output/validation_report.txt         validator output
+#   output/candidate_report.md           deterministic shortlists and scores
+#   output/stages/field_mappings.json    validated stage-4 proposals
